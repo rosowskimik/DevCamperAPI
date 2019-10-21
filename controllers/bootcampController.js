@@ -58,8 +58,30 @@ exports.createBootcamp = async (req, res, next) => {
 // @route				PATCH /api/v1/bootcamps/:id
 // @desc				Update bootcamp with specified id
 // @access			Private
-exports.updateBootcamp = (req, res, next) => {
-  res.status(200).json({ status: 'success' });
+exports.updateBootcamp = async (req, res, next) => {
+  try {
+    const updatedBootcamp = await Bootcamp.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    if (!updatedBootcamp)
+      return res.status(404).json({
+        status: 'fail',
+        message: 'The bootcamp with specified ID does not exist.'
+      });
+
+    res.status(200).json({
+      status: 'success',
+      data: updatedBootcamp
+    });
+  } catch (err) {
+    res.status(400).json({ status: 'fail', message: err.message });
+  }
 };
 
 // @route				DELETED /api/v1/bootcamps/:id
