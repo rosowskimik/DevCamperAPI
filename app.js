@@ -14,6 +14,10 @@ if (process.env.NODE_ENV === 'development') {
 // Basic security headers setup
 app.use(helmet());
 
+// Body parsing middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // Routes
 app.use('/api/v1/bootcamps', bootcampRoutes);
 
