@@ -32,6 +32,13 @@ const handleCastError = err => {
   return new AppError(message, 400);
 };
 
+const handleDuplicateKey = err => {
+  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
+  const message = `Duplicate key value: ${value}. Please enter a different value.`;
+
+  return new AppError(message, 400);
+};
+
 // Error handler middleware
 module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
@@ -43,6 +50,7 @@ module.exports = (err, req, res, next) => {
     let errCp = { ...err };
 
     if (errCp.name === 'CastError') errCp = handleCastError(errCp);
+    if (errCp.code === 11000) errCp = handleDuplicateKey(errCp);
 
     sendErrorProd(errCp, req, res);
   }
