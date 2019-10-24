@@ -2,12 +2,15 @@ const Bootcamp = require('../models/bootcampModel');
 const AppError = require('../utils/appError');
 const asyncHandler = require('../utils/asyncHandler');
 const geocoder = require('../utils/geocoder');
+const APIFeatures = require('../utils/apiFeatures');
 
 // @route				GET /api/v1/bootcamps
 // @desc				Get all bootcamps
 // @access			Public
 exports.getAllBootcamps = asyncHandler(async (req, res, next) => {
-  const bootcamps = await Bootcamp.find();
+  const bootcampsQuery = new APIFeatures(Bootcamp.find(), req.query).filter();
+
+  const bootcamps = await bootcampsQuery.query;
 
   res.status(200).json({
     status: 'success',
