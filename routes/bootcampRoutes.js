@@ -15,4 +15,8 @@ router
   .patch(bootcampController.updateBootcamp)
   .delete(bootcampController.deleteBootcamp);
 
+router
+  .route('/radius/:zipcode/:distance/:unit')
+  .get(bootcampController.getBootcampsInRadius);
+
 module.exports = router;
