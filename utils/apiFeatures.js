@@ -1,21 +1,30 @@
 class APIFeatures {
   constructor(query, reqQuery) {
+    const { fields, sort, limit, page, ...conditions } = reqQuery;
+
     this.query = query;
-    this.reqQuery = reqQuery;
+    this.fields = fields;
+    this.sort = sort || '-createdAt';
+    this.limit = limit;
+    this.page = page;
+    this.conditions = conditions;
   }
 
   filter() {
-    const queryObj = { ...this.reqQuery };
-    const exclude = ['sort', 'limit', 'page', 'fields'];
-    exclude.forEach(el => delete queryObj[el]);
-
-    let queryString = JSON.stringify(queryObj);
-    queryString = queryString.replace(
-      /\b(gt|gte|lt|lte|in)\b/g,
-      match => `$${match}`
+    const queryString = JSON.stringify(this.conditions);
+    this.conditions = JSON.parse(
+      queryString.replace(/\b(gt|gte|lt|lte|ne|in)\b/g, match => `$${match}`)
     );
 
-    this.query = this.query.find(JSON.parse(queryString));
+    this.query = this.query.find(this.conditions);
+
+    return this;
+  }
+
+  selectFields() {
+    this.fields = this.fields && this.fields.replace(/,/g, ' ');
+
+    this.query = this.query.select(this.fields);
 
     return this;
   }

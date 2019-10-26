@@ -8,7 +8,9 @@ const APIFeatures = require('../utils/apiFeatures');
 // @desc				Get all bootcamps
 // @access			Public
 exports.getAllBootcamps = asyncHandler(async (req, res, next) => {
-  const bootcampsQuery = new APIFeatures(Bootcamp.find(), req.query).filter();
+  const bootcampsQuery = new APIFeatures(Bootcamp.find(), req.query)
+    .filter()
+    .selectFields();
 
   const bootcamps = await bootcampsQuery.query;
 
