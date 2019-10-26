@@ -8,15 +8,17 @@ const APIFeatures = require('../utils/apiFeatures');
 // @desc				Get all bootcamps
 // @access			Public
 exports.getAllBootcamps = asyncHandler(async (req, res, next) => {
-  const bootcampsQuery = new APIFeatures(Bootcamp.find(), req.query)
+  const bootcampsQuery = await new APIFeatures(Bootcamp, req.query)
     .filter()
     .selectFields()
-    .sortBy();
+    .sortBy()
+    .paginate();
 
   const bootcamps = await bootcampsQuery.query;
 
   res.status(200).json({
     status: 'success',
+    pagination: bootcampsQuery.pagination,
     results: bootcamps.length,
     data: bootcamps
   });

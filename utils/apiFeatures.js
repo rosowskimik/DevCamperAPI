@@ -1,19 +1,21 @@
 class APIFeatures {
-  constructor(query, reqQuery) {
+  constructor(Model, reqQuery) {
     const {
       fields,
       sort = '-createdAt',
-      limit,
       page,
+      limit,
       ...conditions
     } = reqQuery;
 
-    this.query = query;
+    this.model = Model;
+    this.query = Model.find();
     this.fields = fields;
     this.sort = sort;
-    this.limit = limit;
     this.page = page;
+    this.limit = limit;
     this.conditions = conditions;
+    this.pagination = {};
   }
 
   filter() {
@@ -39,6 +41,31 @@ class APIFeatures {
     this.sort = this.sort.replace(/,/g, ' ');
 
     this.query = this.query.sort(this.sort);
+
+    return this;
+  }
+
+  async paginate() {
+    const page = parseInt(this.page, 10) || 1;
+    const limit = parseInt(this.limit, 10) || 25;
+    const skip = (page - 1) * limit;
+    const endIndex = page * limit;
+    const total = await this.model.find(this.conditions).countDocuments();
+
+    if (skip > 0) {
+      this.pagination.prev = {
+        page: page - 1,
+        limit
+      };
+    }
+    if (endIndex < total) {
+      this.pagination.next = {
+        page: page + 1,
+        limit
+      };
+    }
+
+    this.query = this.query.skip(skip).limit(limit);
 
     return this;
   }
