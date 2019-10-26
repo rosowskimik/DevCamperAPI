@@ -10,7 +10,8 @@ const APIFeatures = require('../utils/apiFeatures');
 exports.getAllBootcamps = asyncHandler(async (req, res, next) => {
   const bootcampsQuery = new APIFeatures(Bootcamp.find(), req.query)
     .filter()
-    .selectFields();
+    .selectFields()
+    .sortBy();
 
   const bootcamps = await bootcampsQuery.query;
 
