@@ -5,16 +5,16 @@ const geocoder = require('../utils/geocoder');
 const bootcampSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, 'Please add a name.'],
+    required: [true, 'Please add a name'],
     unique: true,
     trim: true,
-    maxlength: [50, 'Name cannot exceed 50 characters.']
+    maxlength: [50, 'Name cannot exceed 50 characters']
   },
   slug: String,
   description: {
     type: String,
-    required: [true, 'Please add a description.'],
-    maxlength: [250, 'Description cannot exceed 250 characters.']
+    required: [true, 'Please add a description'],
+    maxlength: [250, 'Description cannot exceed 250 characters']
   },
   website: {
     type: String,
@@ -25,18 +25,18 @@ const bootcampSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    maxlength: [20, 'Phone number cannot exceed 20 characters.']
+    maxlength: [20, 'Phone number cannot exceed 20 characters']
   },
   email: {
     type: String,
     match: [
       /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
-      'Please enter a valid email address.'
+      'Please enter a valid email address'
     ]
   },
   address: {
     type: String,
-    required: [true, 'Please add an address.']
+    required: [true, 'Please add an address']
   },
   location: {
     type: {
