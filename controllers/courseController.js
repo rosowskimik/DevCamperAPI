@@ -8,18 +8,15 @@ const factory = require('./controllerFactory');
 // @desc				Get all courses avalilable or for a given bootcamp
 // @access			Public
 exports.getAllCourses = asyncHandler(async (req, res, next) => {
-  let query;
+  const query = req.params.bootcampId
+    ? new APIFeatures(
+        Course,
+        req.query,
+        Course.find({ bootcamp: req.params.bootcampId })
+      )
+    : new APIFeatures(Course, req.query);
 
-  if (req.params.bootcampId) {
-    query = await new APIFeatures(
-      Course,
-      req.query,
-      Course.find({ bootcamp: req.params.bootcampId })
-    );
-  } else {
-    query = await new APIFeatures(Course, req.query);
-  }
-  query
+  await query
     .filter()
     .selectFields()
     .sortBy()

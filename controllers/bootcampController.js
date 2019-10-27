@@ -6,12 +6,15 @@ const factory = require('./controllerFactory');
 // @route				GET /api/v1/bootcamps
 // @desc				Get all bootcamps
 // @access			Public
-exports.getAllBootcamps = factory.getAll(Bootcamp);
+exports.getAllBootcamps = factory.getAll(Bootcamp, {
+  path: 'courses',
+  select: 'title description'
+});
 
 // @route				GET /api/v1/bootcamps/:id
 // @desc				Get bootcamp by id
 // @access			Public
-exports.getBootcamp = factory.getOne(Bootcamp);
+exports.getBootcamp = factory.getOne(Bootcamp, 'courses');
 
 // @route				GET /api/v1/bootcamps/:zipcode/:distance/:unit
 // @desc				Get all bootcamps in the specified area

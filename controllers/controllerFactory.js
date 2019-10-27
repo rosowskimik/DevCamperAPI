@@ -2,7 +2,7 @@ const AppError = require('../utils/appError');
 const asyncHandler = require('../utils/asyncHandler');
 const APIFeatures = require('../utils/apiFeatures');
 
-exports.getAll = Model =>
+exports.getAll = (Model, populateOptions) =>
   asyncHandler(async (req, res, next) => {
     const resourceQuery = await new APIFeatures(Model, req.query)
       .filter()
@@ -10,7 +10,7 @@ exports.getAll = Model =>
       .sortBy()
       .paginate();
 
-    const documents = await resourceQuery.query;
+    const documents = await resourceQuery.query.populate(populateOptions);
 
     res.status(200).json({
       status: 'success',
@@ -20,9 +20,11 @@ exports.getAll = Model =>
     });
   });
 
-exports.getOne = Model =>
+exports.getOne = (Model, populateOptions) =>
   asyncHandler(async (req, res, next) => {
-    const document = await Model.findById(req.params.id);
+    const document = await Model.findById(req.params.id).populate(
+      populateOptions
+    );
 
     if (!document)
       return next(
