@@ -5,7 +5,11 @@ const courseRouter = require('./courseRoutes');
 
 const router = express.Router();
 
-router.use('/:bootcampId/courses', courseRouter);
+router.use(
+  '/:bootcampId/courses',
+  bootcampController.bootcampExists,
+  courseRouter
+);
 
 router
   .route('/')

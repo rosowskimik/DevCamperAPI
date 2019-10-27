@@ -31,3 +31,16 @@ exports.getAllCourses = asyncHandler(async (req, res, next) => {
     data: courses
   });
 });
+
+// @route				GET /api/v1/courses/:id
+// @desc				Get course by id
+// @access			Public
+exports.getCourse = factory.getOne(Course, {
+  path: 'bootcamp',
+  select: 'name description'
+});
+
+// @route				POST /api/v1/bootcamps/:bootcampId/courses
+// @desc				Create new course
+// @access			Private
+exports.createCourse = factory.createOne(Course);

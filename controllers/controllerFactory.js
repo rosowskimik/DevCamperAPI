@@ -28,7 +28,7 @@ exports.getOne = (Model, populateOptions) =>
 
     if (!document)
       return next(
-        new AppError('The document with specified ID does not exist.', 404)
+        new AppError('Document with specified ID does not exist.', 404)
       );
 
     res.status(200).json({
@@ -60,7 +60,7 @@ exports.updateOne = Model =>
 
     if (!updatedDocument)
       return next(
-        new AppError('The document with specified ID does not exist.', 404)
+        new AppError('Document with specified ID does not exist.', 404)
       );
 
     res.status(200).json({
@@ -75,7 +75,7 @@ exports.deleteOne = Model =>
 
     if (!documentToRemove)
       return next(
-        new AppError('The document with specified ID does not exist.', 404)
+        new AppError('Document with specified ID does not exist.', 404)
       );
 
     await documentToRemove.remove();

@@ -1,7 +1,23 @@
 const Bootcamp = require('../models/bootcampModel');
 const asyncHandler = require('../utils/asyncHandler');
+const AppError = require('../utils/appError');
 const geocoder = require('../utils/geocoder');
 const factory = require('./controllerFactory');
+
+// Bootcamp specific middleware
+exports.bootcampExists = asyncHandler(async (req, res, next) => {
+  const bootcamp = await Bootcamp.exists({ _id: req.params.bootcampId });
+
+  if (!bootcamp)
+    return next(
+      new AppError('Bootcamp with specified ID does not exist.', 404)
+    );
+
+  req.body.bootcamp = req.params.bootcampId;
+  next();
+});
+
+// Bootcamp route handlers
 
 // @route				GET /api/v1/bootcamps
 // @desc				Get all bootcamps
