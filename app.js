@@ -3,6 +3,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 
 const bootcampRoutes = require('./routes/bootcampRoutes');
+const courseRoutes = require('./routes/courseRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/v1/bootcamps', bootcampRoutes);
+app.use('/api/v1/courses', courseRoutes);
 
 // Global error handler middleware
 app.use(errorHandler);

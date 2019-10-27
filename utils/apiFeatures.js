@@ -1,5 +1,5 @@
 class APIFeatures {
-  constructor(Model, reqQuery) {
+  constructor(Model, reqQuery, query) {
     const {
       fields,
       sort = '-createdAt',
@@ -9,7 +9,7 @@ class APIFeatures {
     } = reqQuery;
 
     this.model = Model;
-    this.query = Model.find();
+    this.query = query || Model.find();
     this.fields = fields;
     this.sort = sort;
     this.page = page;

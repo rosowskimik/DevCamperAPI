@@ -1,8 +1,6 @@
 const Bootcamp = require('../models/bootcampModel');
-const AppError = require('../utils/appError');
 const asyncHandler = require('../utils/asyncHandler');
 const geocoder = require('../utils/geocoder');
-const APIFeatures = require('../utils/apiFeatures');
 const factory = require('./controllerFactory');
 
 // @route				GET /api/v1/bootcamps
