@@ -3,43 +3,17 @@ const AppError = require('../utils/appError');
 const asyncHandler = require('../utils/asyncHandler');
 const geocoder = require('../utils/geocoder');
 const APIFeatures = require('../utils/apiFeatures');
+const factory = require('./controllerFactory');
 
 // @route				GET /api/v1/bootcamps
 // @desc				Get all bootcamps
 // @access			Public
-exports.getAllBootcamps = asyncHandler(async (req, res, next) => {
-  const bootcampsQuery = await new APIFeatures(Bootcamp, req.query)
-    .filter()
-    .selectFields()
-    .sortBy()
-    .paginate();
-
-  const bootcamps = await bootcampsQuery.query;
-
-  res.status(200).json({
-    status: 'success',
-    pagination: bootcampsQuery.pagination,
-    results: bootcamps.length,
-    data: bootcamps
-  });
-});
+exports.getAllBootcamps = factory.getAll(Bootcamp);
 
 // @route				GET /api/v1/bootcamps/:id
 // @desc				Get bootcamp by id
 // @access			Public
-exports.getBootcamp = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findById(req.params.id);
-
-  if (!bootcamp)
-    return next(
-      new AppError('The bootcamp with specified ID does not exist.', 404)
-    );
-
-  res.status(200).json({
-    status: 'success',
-    data: bootcamp
-  });
-});
+exports.getBootcamp = factory.getOne(Bootcamp);
 
 // @route				GET /api/v1/bootcamps/:zipcode/:distance/:unit
 // @desc				Get all bootcamps in the specified area
@@ -67,49 +41,14 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
 // @route				POST /api/v1/bootcamps
 // @desc				Create new bootcamp
 // @access			Private
-exports.createBootcamp = asyncHandler(async (req, res, next) => {
-  const newBootcamp = await Bootcamp.create(req.body);
-
-  res.status(201).json({
-    status: 'success',
-    data: newBootcamp
-  });
-});
+exports.createBootcamp = factory.createOne(Bootcamp);
 
 // @route				PATCH /api/v1/bootcamps/:id
 // @desc				Update bootcamp with specified id
 // @access			Private
-exports.updateBootcamp = asyncHandler(async (req, res, next) => {
-  const updatedBootcamp = await Bootcamp.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    {
-      new: true,
-      runValidators: true
-    }
-  );
-
-  if (!updatedBootcamp)
-    return next(
-      new AppError('The bootcamp with specified ID does not exist.', 404)
-    );
-
-  res.status(200).json({
-    status: 'success',
-    data: updatedBootcamp
-  });
-});
+exports.updateBootcamp = factory.updateOne(Bootcamp);
 
 // @route				DELETE /api/v1/bootcamps/:id
 // @desc				Delete bootcamp with specified id
 // @access			Private
-exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
-  const deletedBootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
-
-  if (!deletedBootcamp)
-    return next(
-      new AppError('The bootcamp with specified ID does not exist.', 404)
-    );
-
-  res.status(204).json({ status: 'success', message: 'Bootcamp deleted' });
-});
+exports.deleteBootcamp = factory.deleteOne(Bootcamp);
