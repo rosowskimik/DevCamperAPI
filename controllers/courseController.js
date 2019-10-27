@@ -44,3 +44,13 @@ exports.getCourse = factory.getOne(Course, {
 // @desc				Create new course
 // @access			Private
 exports.createCourse = factory.createOne(Course);
+
+// @route				PATCH /api/v1/courses/:id
+// @desc				Update bootcamp with specified id
+// @access			Private
+exports.updateCourse = factory.updateOne(Course);
+
+// @route				DELETE /api/v1/courses/:id
+// @desc				Delete bootcamp with specified id
+// @access			Private
+exports.deleteCourse = factory.deleteOne(Course);

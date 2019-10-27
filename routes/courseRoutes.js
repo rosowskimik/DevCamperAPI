@@ -8,6 +8,11 @@ router
   .route('/')
   .get(courseController.getAllCourses)
   .post(courseController.createCourse);
-router.route('/:id').get(courseController.getCourse);
+
+router
+  .route('/:id')
+  .get(courseController.getCourse)
+  .patch(courseController.updateCourse)
+  .delete(courseController.deleteCourse);
 
 module.exports = router;
