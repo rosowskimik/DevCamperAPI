@@ -131,4 +131,10 @@ bootcampSchema.pre('save', async function(next) {
   next();
 });
 
+// Casdcade remove courses belonging to this bootcamp
+bootcampSchema.pre('remove', async function(next) {
+  await this.model('Course').deleteMany({ bootcamp: this._id });
+  next();
+});
+
 module.exports = mongoose.model('Bootcamp', bootcampSchema);

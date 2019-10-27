@@ -71,12 +71,14 @@ exports.updateOne = Model =>
 
 exports.deleteOne = Model =>
   asyncHandler(async (req, res, next) => {
-    const deletedDocument = await Model.findByIdAndDelete(req.params.id);
+    const documentToRemove = await Model.findById(req.params.id);
 
-    if (!deletedDocument)
+    if (!documentToRemove)
       return next(
         new AppError('The document with specified ID does not exist.', 404)
       );
+
+    await documentToRemove.remove();
 
     res.status(204).json({ status: 'success', message: 'Document deleted' });
   });
