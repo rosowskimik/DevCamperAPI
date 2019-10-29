@@ -47,8 +47,12 @@ exports.createOne = Model =>
     });
   });
 
-exports.updateOne = Model =>
+exports.updateOne = (Model, ...removeFields) =>
   asyncHandler(async (req, res, next) => {
+    if (removeFields) {
+      removeFields.forEach(field => delete req.body[field]);
+    }
+
     const updatedDocument = await Model.findByIdAndUpdate(
       req.params.id,
       req.body,

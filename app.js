@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -19,6 +20,9 @@ app.use(helmet());
 // Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Public static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
 app.use('/api/v1/bootcamps', bootcampRoutes);

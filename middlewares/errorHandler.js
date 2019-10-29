@@ -39,6 +39,12 @@ const handleDuplicateKey = err => {
   return new AppError(message, 400);
 };
 
+const handleMulterSizeError = err => {
+  const message = 'Only images up to 2 MB are supported.';
+
+  return new AppError(message, 413);
+};
+
 // Error handler middleware
 module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
@@ -48,9 +54,11 @@ module.exports = (err, req, res, next) => {
     sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     let errCp = { ...err };
+    errCp.message = err.message;
 
     if (errCp.name === 'CastError') errCp = handleCastError(errCp);
     if (errCp.code === 11000) errCp = handleDuplicateKey(errCp);
+    if (errCp.code === 'LIMIT_FILE_SIZE') errCp = handleMulterSizeError(errCp);
 
     sendErrorProd(errCp, req, res);
   }

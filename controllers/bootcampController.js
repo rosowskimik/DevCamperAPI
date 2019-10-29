@@ -63,7 +63,29 @@ exports.createBootcamp = factory.createOne(Bootcamp);
 // @route				PATCH /api/v1/bootcamps/:id
 // @desc				Update bootcamp with specified id
 // @access			Private
-exports.updateBootcamp = factory.updateOne(Bootcamp);
+exports.updateBootcamp = factory.updateOne(Bootcamp, 'photo');
+
+// @route				PATCH /api/v1/bootcamps/:id/photo
+// @desc				Upload / change bootcamp image
+// @access			Private
+exports.uploadPhoto = asyncHandler(async (req, res, next) => {
+  const bootcampWithPhoto = await Bootcamp.findByIdAndUpdate(
+    req.params.bootcampId,
+    {
+      photo: req.file.filename
+    },
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+
+  res.status(200).json({
+    status: 'success',
+    filename: req.file.filename,
+    data: bootcampWithPhoto
+  });
+});
 
 // @route				DELETE /api/v1/bootcamps/:id
 // @desc				Delete bootcamp with specified id

@@ -2,6 +2,7 @@ const express = require('express');
 
 const bootcampController = require('../controllers/bootcampController');
 const courseRouter = require('./courseRoutes');
+const imageUpload = require('../middlewares/imageUpload');
 
 const router = express.Router();
 
@@ -10,6 +11,14 @@ router.use(
   bootcampController.bootcampExists,
   courseRouter
 );
+
+router
+  .route('/:bootcampId/photo')
+  .patch(
+    bootcampController.bootcampExists,
+    imageUpload('photo'),
+    bootcampController.uploadPhoto
+  );
 
 router
   .route('/')
