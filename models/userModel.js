@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -8,6 +9,7 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'Please add an email'],
+    unique: true,
     match: [
       /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i,
       'Please enter a valid email address'
@@ -19,16 +21,28 @@ const userSchema = new mongoose.Schema({
     minlength: [6, 'Password must be at least 6 characters long'],
     select: false
   },
-  role: {
+  passwordConfirm: {
     type: String,
-    enum: ['user', 'publisher'],
-    default: 'user'
+    validate: {
+      validator: function(el) {
+        return this.password === el;
+      },
+      message: 'Passwords do not match'
+    }
   },
-  passwordResetToken: {
-    type: String,
+  confirmed: {
+    type: Boolean,
     select: false
   },
-  passwordResetExpire: {
+  role: {
+    type: String,
+    enum: {
+      values: ['user', 'publisher'],
+      message: "Role must be either 'user' or 'publisher'"
+    },
+    default: 'user'
+  },
+  passwordChangedAt: {
     type: Date,
     select: false
   },
@@ -36,6 +50,25 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   }
+});
+
+// Generate hashed password
+userSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+
+  next();
+});
+
+// Update changed password time
+userSchema.pre('save', function(next) {
+  if (!this.isModified('password') || this.isNew) return next();
+
+  this.passwordChangedAt = Date.now();
+
+  next();
 });
 
 const User = mongoose.model('User', userSchema);

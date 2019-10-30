@@ -45,6 +45,14 @@ const handleMulterSizeError = err => {
   return new AppError(message, 413);
 };
 
+const handleValidationError = ({ errors }) => {
+  const messages = Object.keys(errors).map(
+    key => `${errors[key].path}: ${errors[key].message}`
+  );
+
+  return new AppError(messages, 400);
+};
+
 // Error handler middleware
 module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
@@ -59,6 +67,7 @@ module.exports = (err, req, res, next) => {
     if (errCp.name === 'CastError') errCp = handleCastError(errCp);
     if (errCp.code === 11000) errCp = handleDuplicateKey(errCp);
     if (errCp.code === 'LIMIT_FILE_SIZE') errCp = handleMulterSizeError(errCp);
+    if (errCp.name === 'ValidationError') errCp = handleValidationError(errCp);
 
     sendErrorProd(errCp, req, res);
   }
