@@ -1,6 +1,6 @@
 const path = require('path');
 const multer = require('multer');
-const AppError = require('../utils/appError');
+const ErrorResponse = require('../utils/errorResponse');
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -16,7 +16,7 @@ const multerFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image')) {
     cb(null, true);
   } else {
-    cb(new AppError('Only image files can be uploaded.', 415), false);
+    cb(new ErrorResponse('Only image files can be uploaded.', 415), false);
   }
 };
 

@@ -1,4 +1,4 @@
-const AppError = require('../utils/appError');
+const ErrorResponse = require('../utils/errorResponse');
 
 // Response handlers
 const sendErrorDev = (err, req, res) => {
@@ -29,20 +29,20 @@ const sendErrorProd = (err, req, res) => {
 const handleCastError = err => {
   const message = `Invalid ${err.path}: ${err.value}`;
 
-  return new AppError(message, 400);
+  return new ErrorResponse(message, 400);
 };
 
 const handleDuplicateKey = err => {
   const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
   const message = `Duplicate key value: ${value}. Please enter a different value.`;
 
-  return new AppError(message, 400);
+  return new ErrorResponse(message, 400);
 };
 
 const handleMulterSizeError = err => {
   const message = 'Only images up to 2 MB are supported.';
 
-  return new AppError(message, 413);
+  return new ErrorResponse(message, 413);
 };
 
 const handleValidationError = ({ errors }) => {
@@ -50,7 +50,7 @@ const handleValidationError = ({ errors }) => {
     key => `${errors[key].path}: ${errors[key].message}`
   );
 
-  return new AppError(messages, 400);
+  return new ErrorResponse(messages, 400);
 };
 
 // Error handler middleware

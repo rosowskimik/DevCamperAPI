@@ -30,10 +30,6 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords do not match'
     }
   },
-  confirmed: {
-    type: Boolean,
-    select: false
-  },
   role: {
     type: String,
     enum: {
@@ -70,6 +66,11 @@ userSchema.pre('save', function(next) {
 
   next();
 });
+
+// Check if password is correct
+userSchema.methods.isPasswordCorrect = async function(candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 const User = mongoose.model('User', userSchema);
 

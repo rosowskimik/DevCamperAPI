@@ -1,6 +1,6 @@
 const Bootcamp = require('../models/bootcampModel');
 const asyncHandler = require('../utils/asyncHandler');
-const AppError = require('../utils/appError');
+const ErrorResponse = require('../utils/errorResponse');
 const geocoder = require('../utils/geocoder');
 const factory = require('./controllerFactory');
 
@@ -10,7 +10,7 @@ exports.bootcampExists = asyncHandler(async (req, res, next) => {
 
   if (!bootcamp)
     return next(
-      new AppError('Bootcamp with specified ID does not exist.', 404)
+      new ErrorResponse('Bootcamp with specified ID does not exist.', 404)
     );
 
   req.body.bootcamp = req.params.bootcampId;

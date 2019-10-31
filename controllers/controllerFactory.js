@@ -1,4 +1,4 @@
-const AppError = require('../utils/appError');
+const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../utils/asyncHandler');
 const APIFeatures = require('../utils/apiFeatures');
 
@@ -28,7 +28,7 @@ exports.getOne = (Model, populateOptions) =>
 
     if (!document)
       return next(
-        new AppError('Document with specified ID does not exist.', 404)
+        new ErrorResponse('Document with specified ID does not exist.', 404)
       );
 
     res.status(200).json({
@@ -64,7 +64,7 @@ exports.updateOne = (Model, ...removeFields) =>
 
     if (!updatedDocument)
       return next(
-        new AppError('Document with specified ID does not exist.', 404)
+        new ErrorResponse('Document with specified ID does not exist.', 404)
       );
 
     res.status(200).json({
@@ -79,7 +79,7 @@ exports.deleteOne = Model =>
 
     if (!documentToRemove)
       return next(
-        new AppError('Document with specified ID does not exist.', 404)
+        new ErrorResponse('Document with specified ID does not exist.', 404)
       );
 
     await documentToRemove.remove();
