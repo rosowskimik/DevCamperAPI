@@ -53,6 +53,12 @@ const handleValidationError = ({ errors }) => {
   return new ErrorResponse(messages, 400);
 };
 
+const handleInvalidToken = () =>
+  new ErrorResponse('Invalid token. Please login again', 401);
+
+const handleExpiredToken = () =>
+  new ErrorResponse('Your token has expired. please login again', 401);
+
 // Error handler middleware
 module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
@@ -68,6 +74,8 @@ module.exports = (err, req, res, next) => {
     if (errCp.code === 11000) errCp = handleDuplicateKey(errCp);
     if (errCp.code === 'LIMIT_FILE_SIZE') errCp = handleMulterSizeError(errCp);
     if (errCp.name === 'ValidationError') errCp = handleValidationError(errCp);
+    if (errCp.name === 'JsonWebTokenError') errCp = handleInvalidToken();
+    if (errCp.name === 'TokenExpiredError') errCp = handleExpiredToken();
 
     sendErrorProd(errCp, req, res);
   }

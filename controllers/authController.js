@@ -62,8 +62,8 @@ exports.logout = (req, res, next) => {
 
 // Sign JWT token
 const signToken = payload => {
-  return jwt.sign(payload, process.env.JWT_TOKEN_SECRET, {
-    expiresIn: process.env.JWT_TOKEN_EXPIRE
+  return jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE
   });
 };
 
@@ -71,7 +71,7 @@ const signToken = payload => {
 const respondWithToken = (token, statusCode, res, data) => {
   const cookieOptions = {
     expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production'
