@@ -52,3 +52,15 @@ exports.protect = asyncHandler(async (req, res, next) => {
   req.user = user;
   next();
 });
+
+exports.authorize = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.user.role)) {
+    return next(
+      new ErrorResponse(
+        `User with role ${req.user.role} cannot access the resource`,
+        403
+      )
+    );
+  }
+  next();
+};

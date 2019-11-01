@@ -9,12 +9,24 @@ const router = express.Router({ mergeParams: true });
 router
   .route('/')
   .get(courseController.getAllCourses)
-  .post(auth.protect, courseController.createCourse);
+  .post(
+    auth.protect,
+    auth.authorize('publisher', 'admin'),
+    courseController.createCourse
+  );
 
 router
   .route('/:id')
   .get(courseController.getCourse)
-  .patch(auth.protect, courseController.updateCourse)
-  .delete(auth.protect, courseController.deleteCourse);
+  .patch(
+    auth.protect,
+    auth.authorize('publisher', 'admin'),
+    courseController.updateCourse
+  )
+  .delete(
+    auth.protect,
+    auth.authorize('publisher', 'admin'),
+    courseController.deleteCourse
+  );
 
 module.exports = router;

@@ -18,6 +18,7 @@ router
   .route('/:bootcampId/photo')
   .patch(
     auth.protect,
+    auth.authorize('publisher', 'admin'),
     bootcampController.bootcampExists,
     imageUpload('photo'),
     bootcampController.uploadPhoto
@@ -26,13 +27,25 @@ router
 router
   .route('/')
   .get(bootcampController.getAllBootcamps)
-  .post(auth.protect, bootcampController.createBootcamp);
+  .post(
+    auth.protect,
+    auth.authorize('publisher', 'admin'),
+    bootcampController.createBootcamp
+  );
 
 router
   .route('/:id')
   .get(bootcampController.getBootcamp)
-  .patch(auth.protect, bootcampController.updateBootcamp)
-  .delete(auth.protect, bootcampController.deleteBootcamp);
+  .patch(
+    auth.protect,
+    auth.authorize('publisher', 'admin'),
+    bootcampController.updateBootcamp
+  )
+  .delete(
+    auth.protect,
+    auth.authorize('publisher', 'admin'),
+    bootcampController.deleteBootcamp
+  );
 
 router
   .route('/radius/:zipcode/:distance/:unit')
