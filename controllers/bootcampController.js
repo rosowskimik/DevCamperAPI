@@ -58,7 +58,30 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
 // @route				POST /api/v1/bootcamps
 // @desc				Create new bootcamp
 // @access			Private
-exports.createBootcamp = factory.createOne(Bootcamp);
+exports.createBootcamp = asyncHandler(async (req, res, next) => {
+  // Assign bootcamp to logged in user
+  req.body.user = req.user._id;
+
+  // Check if logged in publisher already created a bootcamp
+  if (
+    (await Bootcamp.exists({ user: req.body.user })) &&
+    req.user.role !== 'admin'
+  ) {
+    return next(
+      new ErrorResponse(
+        `User with ID ${req.body.user} has already created a bootcamp`,
+        400
+      )
+    );
+  }
+
+  const newBootcamp = await Bootcamp.create(req.body);
+
+  res.status(201).json({
+    status: 'success',
+    data: newBootcamp
+  });
+});
 
 // @route				PATCH /api/v1/bootcamps/:id
 // @desc				Update bootcamp with specified id
