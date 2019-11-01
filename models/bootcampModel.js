@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const geocoder = require('../utils/geocoder');
@@ -139,6 +141,13 @@ bootcampSchema.pre('save', async function(next) {
 // Casdcade remove courses belonging to this bootcamp
 bootcampSchema.pre('remove', async function(next) {
   await this.model('Course').deleteMany({ bootcamp: this._id });
+
+  if (this.photo !== 'no-photo.jpg') {
+    fs.unlink(
+      path.join(__dirname, '..', 'public', 'uploads', this.photo),
+      err => {}
+    );
+  }
   next();
 });
 

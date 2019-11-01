@@ -7,7 +7,6 @@ const multerStorage = multer.diskStorage({
     cb(null, path.join(__dirname, '..', 'public', 'uploads'));
   },
   filename: (req, file, cb) => {
-    console.log(req.body);
     cb(null, `bootcamp-${req.params.bootcampId}.png`);
   }
 });
