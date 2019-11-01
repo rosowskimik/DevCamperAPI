@@ -84,6 +84,13 @@ userSchema.methods.wasPasswordChanged = function(jwtIssuedAt) {
   return false;
 };
 
+// Check if user is provided resource owner or is an admin
+userSchema.methods.isOwner = function(resource) {
+  return (
+    resource.user.toString() === this._id.toString() || this.role === 'admin'
+  );
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

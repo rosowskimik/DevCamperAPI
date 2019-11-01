@@ -95,10 +95,7 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (
-    oldBootcamp.user.toString() !== req.user._id.toString() &&
-    req.user.role !== 'admin'
-  ) {
+  if (!req.user.isOwner(oldBootcamp)) {
     return next(
       new ErrorResponse(
         `User with ID ${req.user._id} is not authorized to update this bootcamp`,
@@ -129,10 +126,7 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
 exports.uploadPhoto = asyncHandler(async (req, res, next) => {
   const oldBootcamp = await Bootcamp.findById(req.params.bootcampId);
 
-  if (
-    oldBootcamp.user.toString() !== req.user._id.toString() &&
-    req.user.role !== 'admin'
-  ) {
+  if (!req.user.isOwner(oldBootcamp)) {
     return next(
       new ErrorResponse(
         `User with ID ${req.user._id} is not authorized to update this bootcamp`,
@@ -171,10 +165,7 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
     );
   }
 
-  if (
-    bootcampToRemove.user.toString() !== req.user._id.toString() &&
-    req.user.role !== 'admin'
-  ) {
+  if (!req.user.isOwner(bootcampToRemove)) {
     return next(
       new ErrorResponse(
         `User with ID ${req.user._id} is not authorized to remove this bootcamp`,
