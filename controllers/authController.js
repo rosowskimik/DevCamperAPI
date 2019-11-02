@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const User = require('../models/userModel');
 const asyncHandler = require('../utils/asyncHandler');
 const ErrorResponse = require('../utils/errorResponse');
@@ -99,9 +100,29 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 // @route				PATCH	/api/v1/auth/resetpassword
 // @desc				Reset user's password
 // @access			Public
-// exports.resetPassword = asyncHandler(async (req, res, next) => {
-// 	const user = await User.findOne({})
-// })
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+  const passwordResetToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    passwordResetToken,
+    passwordResetExpire: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return next(new ErrorResponse('Invalid token', 401));
+  }
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+
+  const token = signToken({ id: user._id });
+
+  respondWithToken(token, 200, res, { message: 'Password changed' });
+});
 
 // Local utils
 

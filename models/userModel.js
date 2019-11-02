@@ -72,6 +72,8 @@ userSchema.pre('save', function(next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 5000;
+  this.passwordResetToken = undefined;
+  this.passwordResetExpire = undefined;
 
   next();
 });
