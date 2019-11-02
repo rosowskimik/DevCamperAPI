@@ -165,6 +165,22 @@ exports.deleteOne = Model =>
     });
   });
 
+exports.deleteUser = currentUser =>
+  asyncHandler(async (req, res, next) => {
+    const deletedUser = await User.findByIdAndRemove(
+      currentUser ? req.user._id : req.params.id
+    );
+
+    if (!deletedUser) {
+      return next(new ErrorResponse('User not found', 404));
+    }
+
+    res.status(204).json({
+      status: 'success',
+      message: 'User deleted'
+    });
+  });
+
 // Local utils
 const getResourceName = (Model, uppercase = true) => {
   const name = Model.collection.name.substring(

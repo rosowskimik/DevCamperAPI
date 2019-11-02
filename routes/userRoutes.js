@@ -10,7 +10,8 @@ router.use(auth.protect);
 router
   .route('/me')
   .get(userController.getMe)
-  .patch(userController.updateMe);
+  .patch(userController.updateMe)
+  .delete(userController.deleteMe);
 
 router.patch('/changemypassword', userController.changePassword);
 

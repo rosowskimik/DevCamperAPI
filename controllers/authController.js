@@ -19,7 +19,7 @@ exports.register = asyncHandler(async (req, res, next) => {
     role
   });
 
-  respondWithToken({ id: user._id }, 201, res, {
+  respondWithToken({ id: newUser._id }, 201, res, {
     message: 'User created'
   });
 });
