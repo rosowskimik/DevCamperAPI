@@ -1,3 +1,4 @@
+const User = require('../models/userModel');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../utils/asyncHandler');
 const APIFeatures = require('../utils/apiFeatures');
@@ -38,6 +39,22 @@ exports.getOne = (Model, populateOptions) =>
     res.status(200).json({
       status: 'success',
       data: document
+    });
+  });
+
+exports.getUser = currentUser =>
+  asyncHandler(async (req, res, next) => {
+    const user = await User.findById(
+      currentUser ? req.user._id : req.params.id
+    );
+
+    if (!user) {
+      return next(new ErrorResponse('User not found', 404));
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: user
     });
   });
 
@@ -117,12 +134,10 @@ exports.deleteOne = Model =>
     }
     await documentToRemove.remove();
 
-    res
-      .status(204)
-      .json({
-        status: 'success',
-        message: `${getResourceName(Model)} deleted`
-      });
+    res.status(204).json({
+      status: 'success',
+      message: `${getResourceName(Model)} deleted`
+    });
   });
 
 // Local utils
