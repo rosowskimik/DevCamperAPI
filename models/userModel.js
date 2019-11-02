@@ -78,6 +78,14 @@ userSchema.pre('save', function(next) {
   next();
 });
 
+// Cascade remove bootcamps & courses owned by user
+userSchema.pre('remove', async function(next) {
+  if (this.role === 'admin') return next();
+  const bootcamp = await this.model('Bootcamp').findOne({ user: this._id });
+  await bootcamp.remove();
+  next();
+});
+
 // Generate new password reset token
 userSchema.methods.generateResetToken = function() {
   const resetToken = crypto.randomBytes(32).toString('hex');

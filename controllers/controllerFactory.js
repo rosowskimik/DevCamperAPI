@@ -167,13 +167,23 @@ exports.deleteOne = Model =>
 
 exports.deleteUser = currentUser =>
   asyncHandler(async (req, res, next) => {
-    const deletedUser = await User.findByIdAndRemove(
+    const userToRemove = await User.findById(
       currentUser ? req.user._id : req.params.id
     );
 
-    if (!deletedUser) {
+    if (!userToRemove) {
       return next(new ErrorResponse('User not found', 404));
     }
+
+    if (currentUser) {
+      res.cookie('jwt', null, {
+        expires: new Date(Date.now() + 1000 * 10),
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production'
+      });
+    }
+
+    await userToRemove.remove();
 
     res.status(204).json({
       status: 'success',
