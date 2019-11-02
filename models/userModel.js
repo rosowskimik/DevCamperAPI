@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -38,6 +39,14 @@ const userSchema = new mongoose.Schema({
     },
     default: 'user'
   },
+  passwordResetToken: {
+    type: String,
+    select: false
+  },
+  passwordResetExpire: {
+    type: Date,
+    select: false
+  },
   passwordChangedAt: {
     type: Date,
     select: false
@@ -62,10 +71,23 @@ userSchema.pre('save', async function(next) {
 userSchema.pre('save', function(next) {
   if (!this.isModified('password') || this.isNew) return next();
 
-  this.passwordChangedAt = Date.now();
+  this.passwordChangedAt = Date.now() - 5000;
 
   next();
 });
+
+// Generate new password reset token
+userSchema.methods.generateResetToken = function() {
+  const resetToken = crypto.randomBytes(32).toString('hex');
+
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+  this.passwordResetExpire = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
+};
 
 // Check if password is correct
 userSchema.methods.isPasswordCorrect = async function(candidatePassword) {

@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const asyncHandler = require('../utils/asyncHandler');
 const ErrorResponse = require('../utils/errorResponse');
 const jwt = require('jsonwebtoken');
+const sendMail = require('../utils/sendMail');
 
 // @route				POST /api/v1/auth/register
 // @desc				Register new user
@@ -57,6 +58,50 @@ exports.logout = (req, res, next) => {
     })
     .end();
 };
+
+// @route				POST /api/v1/auth/resetpassword
+// @desc				Request a password reset
+// @access			Public
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new ErrorResponse('User with this email does not exist', 404));
+  }
+
+  const resetToken = user.generateResetToken();
+  await user.save({ validateBeforeSave: false });
+
+  const resetUrl = `${req.protocol}://${req.get(
+    'host'
+  )}/api/v1/auth/resetpassword/${resetToken}`;
+
+  try {
+    await sendMail({
+      to: req.body.email,
+      subject: 'Password Reset',
+      message: `You are receiving this message because you (or someone else) have requested the reset of your password. Please make a PATCH request to: \n\n ${resetUrl}`
+    });
+  } catch (err) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(
+      new ErrorResponse('Email could not be sent. Please try again later', 500)
+    );
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Email sent'
+  });
+});
+
+// @route				PATCH	/api/v1/auth/resetpassword
+// @desc				Reset user's password
+// @access			Public
+// exports.resetPassword = asyncHandler(async (req, res, next) => {
+// 	const user = await User.findOne({})
+// })
 
 // Local utils
 
