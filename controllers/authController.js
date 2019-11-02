@@ -2,8 +2,8 @@ const crypto = require('crypto');
 const User = require('../models/userModel');
 const asyncHandler = require('../utils/asyncHandler');
 const ErrorResponse = require('../utils/errorResponse');
-const jwt = require('jsonwebtoken');
 const sendMail = require('../utils/sendMail');
+const respondWithToken = require('../utils/tokenResponse');
 
 // @route				POST /api/v1/auth/register
 // @desc				Register new user
@@ -19,9 +19,7 @@ exports.register = asyncHandler(async (req, res, next) => {
     role
   });
 
-  const token = signToken({ id: newUser._id });
-
-  respondWithToken(token, 201, res, {
+  respondWithToken({ id: user._id }, 201, res, {
     message: 'User created'
   });
 });
@@ -42,9 +40,7 @@ exports.login = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Incorrect email or password', 401));
   }
 
-  const token = signToken({ id: user._id });
-
-  respondWithToken(token, 200, res);
+  respondWithToken({ id: user._id }, 200, res);
 });
 
 // @route				HEAD /api/v1/auth/logout
@@ -119,36 +115,5 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
 
-  const token = signToken({ id: user._id });
-
-  respondWithToken(token, 200, res, { message: 'Password changed' });
+  respondWithToken({ id: user._id }, 200, res, { message: 'Password changed' });
 });
-
-// Local utils
-
-// Sign JWT token
-const signToken = payload => {
-  return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
-  });
-};
-
-// Send back response with token as a cookie
-const respondWithToken = (token, statusCode, res, data) => {
-  const cookieOptions = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-    ),
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production'
-  };
-
-  res
-    .status(statusCode)
-    .cookie('jwt', token, cookieOptions)
-    .json({
-      status: 'success',
-      token,
-      ...data
-    });
-};
