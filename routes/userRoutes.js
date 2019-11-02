@@ -7,6 +7,9 @@ const auth = require('../middlewares/auth');
 const router = express.Router();
 
 router.use(auth.protect);
-router.route('/me').get(userController.getMe);
+router
+  .route('/me')
+  .get(userController.getMe)
+  .patch(userController.updateMe);
 
 module.exports = router;

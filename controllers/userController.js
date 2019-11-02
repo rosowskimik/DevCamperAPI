@@ -8,3 +8,8 @@ const factory = require('./controllerFactory');
 // @desc				Get current logged in user
 // @access			Private
 exports.getMe = factory.getUser(true);
+
+// @route				PATCH /api/v1/user/message
+// @desc				Update user details !NOT PASSWORD
+// @access			Private
+exports.updateMe = factory.updateUser(true);

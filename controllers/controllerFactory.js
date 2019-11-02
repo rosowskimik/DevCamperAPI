@@ -109,6 +109,31 @@ exports.updateOne = (Model, ignoreFields = []) =>
     });
   });
 
+exports.updateUser = currentUser =>
+  asyncHandler(async (req, res, next) => {
+    const fieldsToUpdate = currentUser
+      ? { name: req.body.name, email: req.body.email }
+      : req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      currentUser ? req.user._id : req.params.id,
+      fieldsToUpdate,
+      {
+        new: true,
+        runValidators: true
+      }
+    );
+
+    if (!updatedUser) {
+      return next(new ErrorResponse('User not found', 404));
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: updatedUser
+    });
+  });
+
 exports.deleteOne = Model =>
   asyncHandler(async (req, res, next) => {
     const documentToRemove = await Model.findById(req.params.id);
