@@ -86,39 +86,7 @@ exports.createBootcamp = asyncHandler(async (req, res, next) => {
 // @route				PATCH /api/v1/bootcamps/:id
 // @desc				Update bootcamp with specified id
 // @access			Private
-exports.updateBootcamp = asyncHandler(async (req, res, next) => {
-  const oldBootcamp = await Bootcamp.findById(req.params.id);
-
-  if (!oldBootcamp) {
-    return next(
-      new ErrorResponse('Bootcamp with specified ID does not exist.', 404)
-    );
-  }
-
-  if (!req.user.isOwner(oldBootcamp)) {
-    return next(
-      new ErrorResponse(
-        `User with ID ${req.user._id} is not authorized to update this bootcamp`,
-        403
-      )
-    );
-  }
-  ['photo', 'user'].forEach(field => delete req.body[field]);
-
-  const updatedBootcamp = await Bootcamp.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    {
-      runValidators: true,
-      new: true
-    }
-  );
-
-  res.status(200).json({
-    status: 'success',
-    data: updatedBootcamp
-  });
-});
+exports.updateBootcamp = factory.updateOne(Bootcamp, ['user', 'photo']);
 
 // @route				PATCH /api/v1/bootcamps/:id/photo
 // @desc				Upload / change bootcamp image
@@ -156,25 +124,4 @@ exports.uploadPhoto = asyncHandler(async (req, res, next) => {
 // @route				DELETE /api/v1/bootcamps/:id
 // @desc				Delete bootcamp with specified id
 // @access			Private
-exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
-  const bootcampToRemove = await Bootcamp.findById(req.params.id);
-
-  if (!bootcampToRemove) {
-    return next(
-      new ErrorResponse('Bootcamp with specified ID does not exist.', 404)
-    );
-  }
-
-  if (!req.user.isOwner(bootcampToRemove)) {
-    return next(
-      new ErrorResponse(
-        `User with ID ${req.user._id} is not authorized to remove this bootcamp`,
-        403
-      )
-    );
-  }
-
-  await bootcampToRemove.remove();
-
-  res.status(204).json({ status: 'success', message: 'Bootcamp deleted' });
-});
+exports.deleteBootcamp = factory.deleteOne(Bootcamp);

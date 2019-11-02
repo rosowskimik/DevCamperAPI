@@ -43,12 +43,23 @@ exports.getCourse = factory.getOne(Course, {
 // @route				POST /api/v1/bootcamps/:bootcampId/courses
 // @desc				Create new course
 // @access			Private
-exports.createCourse = factory.createOne(Course);
+exports.createCourse = asyncHandler(async (req, res, next) => {
+  // Assign course to logged in user & bootcamp
+  req.body.user = req.user._id;
+  req.body.bootcamp = req.params.bootcampId;
+
+  const newCourse = await Course.create(req.body);
+
+  res.status(201).json({
+    status: 'success',
+    data: newCourse
+  });
+});
 
 // @route				PATCH /api/v1/courses/:id
 // @desc				Update bootcamp with specified id
 // @access			Private
-exports.updateCourse = factory.updateOne(Course);
+exports.updateCourse = factory.updateOne(Course, ['bootcamp', 'user']);
 
 // @route				DELETE /api/v1/courses/:id
 // @desc				Delete bootcamp with specified id
