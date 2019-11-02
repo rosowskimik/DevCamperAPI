@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: {
-      values: ['user', 'publisher'],
+      values: ['user', 'publisher', 'admin'],
       message: "Role must be either 'user' or 'publisher'"
     },
     default: 'user'
@@ -82,7 +82,7 @@ userSchema.pre('save', function(next) {
 userSchema.pre('remove', async function(next) {
   if (this.role === 'admin') return next();
   const bootcamp = await this.model('Bootcamp').findOne({ user: this._id });
-  await bootcamp.remove();
+  if (bootcamp) await bootcamp.remove();
   next();
 });
 

@@ -15,4 +15,18 @@ router
 
 router.patch('/changemypassword', userController.changePassword);
 
+// Admin only routes
+router.use(auth.authorize('admin'));
+
+router
+  .route('/')
+  .get(userController.getAllUsers)
+  .post(userController.createUser);
+
+router
+  .route('/:id')
+  .get(userController.getUser)
+  .patch(userController.updateUser)
+  .delete(userController.deleteUser);
+
 module.exports = router;

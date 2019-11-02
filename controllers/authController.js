@@ -9,7 +9,9 @@ const respondWithToken = require('../utils/tokenResponse');
 // @desc				Register new user
 // @access			Public
 exports.register = asyncHandler(async (req, res, next) => {
-  const { name, email, password, passwordConfirm, role } = req.body;
+  const { name, email, password, passwordConfirm } = req.body;
+
+  const role = req.body.role === 'admin' ? 'user' : req.body.role;
 
   const newUser = await User.create({
     name,
