@@ -34,7 +34,7 @@ exports.getReview = factory.getOne(Review, {
 
 // @route				POST /api/v1/reviews
 // @desc				Create new review
-// @access
+// @access			Private
 exports.createReview = asyncHandler(async (req, res, next) => {
   // Assign course to logged in user & bootcamp
   req.body.user = req.user._id;
@@ -48,4 +48,12 @@ exports.createReview = asyncHandler(async (req, res, next) => {
   });
 });
 
-// exports.updateReview;
+// @route				PATCH /api/v1/reviews/:id
+// @desc				Update review with specified ID
+// @access			Private
+exports.updateReview = factory.updateOne(Review, ['bootcamp', 'user']);
+
+// @route				DELETE /api/v1/reviews/:id
+// @desc				Delete review with specified ID
+// @access			Private
+exports.deleteReview = factory.deleteOne(Review);
