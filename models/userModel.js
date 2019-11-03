@@ -78,11 +78,15 @@ userSchema.pre('save', function(next) {
   next();
 });
 
-// Cascade remove bootcamps & courses owned by user
+// Cascade remove bootcamps, courses & reviews owned by user
 userSchema.pre('remove', async function(next) {
   if (this.role === 'admin') return next();
   const bootcamp = await this.model('Bootcamp').findOne({ user: this._id });
-  if (bootcamp) await bootcamp.remove();
+
+  const promises = [this.model('Review').deleteMany({ user: this._id })];
+  if (bootcamp) promises.push(bootcamp.remove());
+
+  await Promise.all(promises);
   next();
 });
 
