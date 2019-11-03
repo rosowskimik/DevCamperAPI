@@ -29,6 +29,8 @@ const reviewSchema = new mongoose.Schema({
   }
 });
 
+reviewSchema.index({ bootcamp: 1, user: 1 }, { unique: true });
+
 // Static for calculating bootcamp's average rating
 reviewSchema.statics.getAverageRating = async function(bootcampId) {
   const [obj] = await this.aggregate([

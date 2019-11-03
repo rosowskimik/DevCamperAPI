@@ -32,6 +32,9 @@ exports.getReview = factory.getOne(Review, {
   ]
 });
 
+// @route				POST /api/v1/reviews
+// @desc				Create new review
+// @access
 exports.createReview = asyncHandler(async (req, res, next) => {
   // Assign course to logged in user & bootcamp
   req.body.user = req.user._id;
@@ -44,3 +47,5 @@ exports.createReview = asyncHandler(async (req, res, next) => {
     data: newReview
   });
 });
+
+// exports.updateReview;
