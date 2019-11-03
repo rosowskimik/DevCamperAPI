@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const errorHandler = require('./middlewares/errorHandler');
@@ -27,8 +28,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Prevent NoSQL injections
+// Data sanitizations
 app.use(mongoSanitize());
+app.use(xss());
 
 // Public static files
 app.use(express.static(path.join(__dirname, 'public')));

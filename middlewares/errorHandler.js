@@ -21,26 +21,26 @@ const sendErrorProd = (err, req, res) => {
 
   res.status(500).json({
     status: 'error',
-    message: 'Something went wrong.'
+    message: 'Something went wrong'
   });
 };
 
 // Error modifier functions
 const handleCastError = err => {
-  const message = `Invalid ${err.path}: ${err.value}`;
+  const message = `Invalid ${err.path}`;
 
   return new ErrorResponse(message, 400);
 };
 
 const handleDuplicateKey = err => {
   const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
-  const message = `Duplicate key value: ${value}. Please enter a different value.`;
+  const message = `Duplicate key value: ${value}. Please enter a different value`;
 
   return new ErrorResponse(message, 400);
 };
 
 const handleMulterSizeError = err => {
-  const message = 'Only images up to 2 MB are supported.';
+  const message = 'Only images up to 2 MB are supported';
 
   return new ErrorResponse(message, 413);
 };
