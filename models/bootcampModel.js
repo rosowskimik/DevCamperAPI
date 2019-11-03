@@ -113,6 +113,12 @@ bootcampSchema.virtual('courses', {
   foreignField: 'bootcamp',
   justOne: false
 });
+bootcampSchema.virtual('reviews', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'bootcamp',
+  justOne: false
+});
 
 // Add slug from bootcamp name
 bootcampSchema.pre('save', function(next) {

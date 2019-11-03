@@ -27,6 +27,10 @@ exports.getAllBootcamps = factory.getAll(Bootcamp, {
     {
       path: 'courses',
       select: 'title description'
+    },
+    {
+      path: 'reviews',
+      select: 'name rating'
     }
   ]
 });
@@ -34,7 +38,9 @@ exports.getAllBootcamps = factory.getAll(Bootcamp, {
 // @route				GET /api/v1/bootcamps/:id
 // @desc				Get bootcamp by id
 // @access			Public
-exports.getBootcamp = factory.getOne(Bootcamp, [{ populate: 'courses' }]);
+exports.getBootcamp = factory.getOne(Bootcamp, {
+  populate: ['courses', 'reviews']
+});
 
 // @route				GET /api/v1/bootcamps/:zipcode/:distance/:unit
 // @desc				Get all bootcamps in the specified area
