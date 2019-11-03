@@ -30,7 +30,7 @@ exports.getAllBootcamps = factory.getAll(Bootcamp, {
     },
     {
       path: 'reviews',
-      select: 'name rating'
+      select: 'title rating'
     }
   ]
 });

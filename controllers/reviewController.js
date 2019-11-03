@@ -1,4 +1,5 @@
 const Review = require('../models/reviewModel');
+const asyncHandler = require('../utils/asyncHandler');
 const factory = require('./controllerFactory');
 
 // @route				GET /api/v1/reviews
@@ -22,7 +23,24 @@ exports.getReview = factory.getOne(Review, {
   populate: [
     {
       path: 'bootcamp',
-      select: 'name description'
+      select: 'name'
+    },
+    {
+      path: 'user',
+      select: 'name'
     }
   ]
+});
+
+exports.createReview = asyncHandler(async (req, res, next) => {
+  // Assign course to logged in user & bootcamp
+  req.body.user = req.user._id;
+  req.body.bootcamp = req.params.bootcampId;
+
+  const newReview = await Review.create(req.body);
+
+  res.status(201).json({
+    status: 'success',
+    data: newReview
+  });
 });
