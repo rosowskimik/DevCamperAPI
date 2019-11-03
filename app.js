@@ -3,12 +3,13 @@ const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
+const errorHandler = require('./middlewares/errorHandler');
 
 const bootcampRoutes = require('./routes/bootcampRoutes');
 const courseRoutes = require('./routes/courseRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
-const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
 
@@ -31,6 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routes
 app.use('/api/v1/bootcamps', bootcampRoutes);
 app.use('/api/v1/courses', courseRoutes);
+app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
 

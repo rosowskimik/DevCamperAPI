@@ -1,7 +1,8 @@
 const express = require('express');
 
 const bootcampController = require('../controllers/bootcampController');
-const courseRouter = require('./courseRoutes');
+const courseRoutes = require('./courseRoutes');
+const reviewRoutes = require('./reviewRoutes');
 
 const auth = require('../middlewares/auth');
 const imageUpload = require('../middlewares/imageUpload');
@@ -11,18 +12,22 @@ const router = express.Router();
 router.use(
   '/:bootcampId/courses',
   bootcampController.bootcampExists,
-  courseRouter
+  courseRoutes
+);
+router.use(
+  '/:bootcampId/reviews',
+  bootcampController.bootcampExists,
+  reviewRoutes
 );
 
-router
-  .route('/:bootcampId/photo')
-  .patch(
-    auth.protect,
-    auth.authorize('publisher', 'admin'),
-    bootcampController.bootcampExists,
-    imageUpload('photo'),
-    bootcampController.uploadPhoto
-  );
+router.patch(
+  '/:bootcampId/photo',
+  auth.protect,
+  auth.authorize('publisher', 'admin'),
+  bootcampController.bootcampExists,
+  imageUpload('photo'),
+  bootcampController.uploadPhoto
+);
 
 router
   .route('/')

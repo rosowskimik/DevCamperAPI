@@ -3,15 +3,28 @@ const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../utils/asyncHandler');
 const APIFeatures = require('../utils/apiFeatures');
 
-exports.getAll = (Model, populateOptions) =>
+exports.getAll = (Model, options = {}) =>
   asyncHandler(async (req, res, next) => {
-    const resourceQuery = await new APIFeatures(Model, req.query)
+    const resourceQuery =
+      options.forResource && req.params[`${options.forResource}Id`]
+        ? new APIFeatures(
+            Model,
+            req.query,
+            Model.find({
+              [options.forResource]: req.params[`${options.forResource}Id`]
+            })
+          )
+        : new APIFeatures(Model, req.query);
+
+    await resourceQuery
       .filter()
       .selectFields()
       .sortBy()
       .paginate();
 
-    const documents = await resourceQuery.query.populate(populateOptions);
+    const documents = options.populate
+      ? await resourceQuery.query.populate(options.populate)
+      : await resourceQuery.query;
 
     res.status(200).json({
       status: 'success',
@@ -21,11 +34,13 @@ exports.getAll = (Model, populateOptions) =>
     });
   });
 
-exports.getOne = (Model, populateOptions) =>
+exports.getOne = (Model, options = {}) =>
   asyncHandler(async (req, res, next) => {
-    const document = await Model.findById(req.params.id).populate(
-      populateOptions
-    );
+    const query = Model.findById(req.params.id);
+
+    const document = options.populate
+      ? await query.populate(options.populate)
+      : await query;
 
     if (!document) {
       return next(

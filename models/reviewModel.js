@@ -30,7 +30,7 @@ const reviewSchema = new mongoose.Schema({
 });
 
 // Static for calculating bootcamp's average rating
-courseSchema.statics.getAverageRating = async function(bootcampId) {
+reviewSchema.statics.getAverageRating = async function(bootcampId) {
   const [obj] = await this.aggregate([
     {
       $match: { bootcamp: bootcampId }
