@@ -146,7 +146,12 @@ bootcampSchema.pre('save', async function(next) {
 
 // Casdcade remove courses belonging to this bootcamp
 bootcampSchema.pre('remove', async function(next) {
-  await this.model('Course').deleteMany({ bootcamp: this._id });
+  const promises = [
+    this.model('Course').deleteMany({ bootcamp: this._id }),
+    this.model('Review').deleteMany({ bootcamp: this._id })
+  ];
+
+  await Promise.all(promises);
 
   if (this.photo !== 'no-photo.jpg') {
     fs.unlink(
