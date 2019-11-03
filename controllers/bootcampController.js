@@ -23,16 +23,18 @@ exports.bootcampExists = asyncHandler(async (req, res, next) => {
 // @desc				Get all bootcamps
 // @access			Public
 exports.getAllBootcamps = factory.getAll(Bootcamp, {
-  populate: {
-    path: 'courses',
-    select: 'title description'
-  }
+  populate: [
+    {
+      path: 'courses',
+      select: 'title description'
+    }
+  ]
 });
 
 // @route				GET /api/v1/bootcamps/:id
 // @desc				Get bootcamp by id
 // @access			Public
-exports.getBootcamp = factory.getOne(Bootcamp, { populate: 'courses' });
+exports.getBootcamp = factory.getOne(Bootcamp, [{ populate: 'courses' }]);
 
 // @route				GET /api/v1/bootcamps/:zipcode/:distance/:unit
 // @desc				Get all bootcamps in the specified area

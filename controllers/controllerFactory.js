@@ -5,7 +5,7 @@ const APIFeatures = require('../utils/apiFeatures');
 
 exports.getAll = (Model, options = {}) =>
   asyncHandler(async (req, res, next) => {
-    const resourceQuery =
+    const advancedQuery =
       options.forResource && req.params[`${options.forResource}Id`]
         ? new APIFeatures(
             Model,
@@ -16,19 +16,23 @@ exports.getAll = (Model, options = {}) =>
           )
         : new APIFeatures(Model, req.query);
 
-    await resourceQuery
+    await advancedQuery
       .filter()
       .selectFields()
       .sortBy()
       .paginate();
 
-    const documents = options.populate
-      ? await resourceQuery.query.populate(options.populate)
-      : await resourceQuery.query;
+    if (options.populate && options.populate.length > 0) {
+      options.populate.forEach(pop => {
+        advancedQuery.query.populate(pop);
+      });
+    }
+
+    const documents = await advancedQuery.query;
 
     res.status(200).json({
       status: 'success',
-      pagination: resourceQuery.pagination,
+      pagination: advancedQuery.pagination,
       results: documents.length,
       data: documents
     });
@@ -38,9 +42,13 @@ exports.getOne = (Model, options = {}) =>
   asyncHandler(async (req, res, next) => {
     const query = Model.findById(req.params.id);
 
-    const document = options.populate
-      ? await query.populate(options.populate)
-      : await query;
+    if (options.populate && options.populate.length > 0) {
+      options.populate.forEach(pop => {
+        query.populate(pop);
+      });
+    }
+
+    const document = await query;
 
     if (!document) {
       return next(

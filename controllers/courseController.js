@@ -14,10 +14,12 @@ exports.getAllCourses = factory.getAll(Course, {
 // @desc				Get course by id
 // @access			Public
 exports.getCourse = factory.getOne(Course, {
-  populate: {
-    path: 'bootcamp',
-    select: 'name description'
-  }
+  populate: [
+    {
+      path: 'bootcamp',
+      select: 'name description'
+    }
+  ]
 });
 
 // @route				POST /api/v1/bootcamps/:bootcampId/courses
