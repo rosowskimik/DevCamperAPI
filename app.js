@@ -5,6 +5,7 @@ const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cors = require('cors');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const errorHandler = require('./middlewares/errorHandler');
@@ -16,6 +17,12 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 const app = express();
+
+// Proxy support
+app.enable('trust proxy');
+
+// CORS support
+app.use(cors());
 
 // Development middleware
 if (process.env.NODE_ENV === 'development') {
