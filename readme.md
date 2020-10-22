@@ -18,11 +18,3 @@ npm run dev
 #Run in production mode
 npm start
 ```
-
-## Demo
-The API is live at [devcmp.tech](https://devcmp.tech)
-
-Extensive documentation with examples [here](https://documenter.getpostman.com/view/7803878/SW14VxEs)
-
-- Version: 1.0.0
-- License: MIT
